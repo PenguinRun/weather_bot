@@ -3,11 +3,24 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+require('dotenv').config()
+
+const lineConfig = require('./config/line_bot')
+const lineController = require('./controllers/line_bot')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+const requestTime = function (req, res, next) {
+  req.requestTime = new Date()
+  next()
+}
+
+app.use(requestTime)
+
+app.post('/webhook', lineConfig.lineMiddle, lineController);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
