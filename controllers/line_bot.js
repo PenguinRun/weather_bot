@@ -1,5 +1,5 @@
 const { client } = require('../config/line_bot')
-const countyList = require('../service/county')
+const countyList = require('../services/county')
 const weatherInformation = require('./weather')
 const images = require('./images')
 

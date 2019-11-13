@@ -1,4 +1,4 @@
-const imageUrl = require('../../service/image_url')
+const imageUrl = require('../../services/image_url')
 
 module.exports = function getRainfall() {
     console.log(imageUrl.rainfall())

@@ -1,4 +1,4 @@
-const searchCountyName = require('../../service/county')
+const searchCountyName = require('../../services/county')
 const searchWeatherAction = require('../../models/weather')
 
 module.exports = async function getCountyWeather(locationName) {

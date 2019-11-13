@@ -1,5 +1,5 @@
-const searchCountyName = require('../../service/county')
-const searchCountyId = require('../../service/county_info')
+const searchCountyName = require('../../services/county')
+const searchCountyId = require('../../services/county_info')
 const searchWeatherAction = require('../../models/weather')
 
 module.exports = async function getCountyNote(locationName) {
