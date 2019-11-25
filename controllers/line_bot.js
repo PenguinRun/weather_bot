@@ -32,8 +32,10 @@ async function handleEvent(event) {
         return element === event.message.text
     })
     if (foundCounty !== undefined) {
-        return client.replyMessage(event.replyToken, await weatherInformation.getCountyWeahter(countyList[foundCounty]))
-        // return client.replyMessage(event.replyToken, await weatherInformation.getCountyNote(countyList[foundCounty]))
+        let weatherInformacitonResult = []
+        weatherInformacitonResult.push(await weatherInformation.getCountyWeahter(countyList[foundCounty]))
+        // weatherInformacitonResult.push(await weatherInformation.getCountyNote(countyList[foundCounty]))
+        return client.replyMessage(event.replyToken, weatherInformacitonResult)
     }
     return client.replyMessage(event.replyToken, {
         type: 'text',

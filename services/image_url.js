@@ -13,7 +13,12 @@ const aqi = function () {
     return `https://taqm.epa.gov.tw/taqm/Chart/AqiMap/map2.aspx?lang=tw&ts=${date}`
 }
 
-module.exports = { uvi, rainfall, temperature, aqi }
+const wxImage = function (value, meridiem) {
+    const wxImage = require(`${__dirname}/../public/weather_icons.json`)
+    return wxImage[meridiem][value]
+}
+
+module.exports = { uvi, rainfall, temperature, aqi, wxImage }
 
 const onTime = () => {
     const date = new Date();
