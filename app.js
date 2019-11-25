@@ -20,7 +20,7 @@ const requestTime = function (req, res, next) {
 
 app.use(requestTime)
 
-app.post('/webhook', lineConfig.lineMiddle, lineController);
+app.post('/api/weather_bot/webhook', lineConfig.lineMiddle, lineController);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
