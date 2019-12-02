@@ -1,17 +1,16 @@
-const searchCountyName = require('../../services/county')
 const searchWeatherAction = require('../../models/weather')
 const imagUrl = require('../../services/image_url')
 
 module.exports = async function getCountyWeather(locationName) {
   try {
-    const preProcessLocationName = encodeURIComponent(searchCountyName[locationName])
+    // 將 locationName 轉成 encode
+    const preProcessLocationName = encodeURIComponent(locationName)
+    // 藉由氣象局 API 來取得資料。
     const result = await searchWeatherAction.recentCountyData(preProcessLocationName)
-    // console.log('===result: ', result.uviDatas[0].parameter)
-    // const uviData = fileterDatas(result.uviDatas)
     const containerData = await containerFilterDatas(locationName, result)
     return {
       "type": "flex",
-      "altText": "this is a flex message",
+      "altText": "一週天氣",
       "contents": {
         "type": "carousel",
         "contents": containerData
@@ -27,9 +26,17 @@ function containerFilterDatas(locationName, data) {
   let containers = []
   for (let i = 0; i < data.uviDatas.length; i += 1) {
     let date = data.uviDatas[i].startTime.substring(5, 10)
+    console.log('===data.uviDatas[0].startTime): ', data.uviDatas[0].startTime)
+    console.log('date: ', new Date(data.uviDatas[0].startTime))
+    console.log(new Date())
+    if (new Date(data.uviDatas[0].startTime) > new Date()) {
+      console.log('===hi')
+    }
+    // break;
     const englishDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const colors = ['#FFB11B','#F596AA','#227D51','#F17C67','#0D5661','#592C63','#F44336']
     const day = new Date(date)
+    const dayInfomation = `${locationName} - ${date.replace('-', '/')} ${englishDays[day.getDay()]}`
     const component = {
       "type": "bubble",
       "header": {
@@ -38,7 +45,7 @@ function containerFilterDatas(locationName, data) {
         "contents": [
           {
             "type": "text",
-            "text": `${locationName} - ${date.replace('-', '/')} ${englishDays[day.getDay()]}`,
+            "text": dayInfomation,
             "size": "xl",
             "weight": "bold",
             "color": "#FFFFFF"
@@ -106,7 +113,7 @@ function filterDatas(data, date, index) {
         contents: [
           {
             type: 'text',
-            text: `${timeInterval}`,
+            text: `${timeInterval} - ${data.minTDatas[i].startTime}`,
             weight: 'bold',
             margin: 'xs',
             size: 'xs',

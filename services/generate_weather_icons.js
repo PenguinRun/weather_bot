@@ -12,7 +12,7 @@ async function generateWeatherIconsUrl() {
   }
   // 目前氣象局有 42 個 icons 可以使用 文件: https://opendata.cwb.gov.tw/opendatadoc/MFC/D0047.pdf
   // 需注意，imgur 有每小時最多 50 個請求的限制，超過就會被 ban 1 小時。來源：https://help.imgur.com/hc/en-us/articles/115000083326-What-files-can-I-upload-What-is-the-size-limit-
-  for (let i = 22; i <= 42; i += 1) {
+  for (let i = 0; i <= 42; i += 1) {
     const index = i < 10 ? '0' + i.toString() : i.toString()
     const dayBase64Code = await getSvgBase64Code('day', index)
     const dayIconImgurUrl = await getImgurURL(dayBase64Code)
