@@ -24,19 +24,22 @@ module.exports = async function getCountyWeather(locationName) {
 
 function containerFilterDatas(locationName, data) {
   let containers = []
-  for (let i = 0; i < data.uviDatas.length; i += 1) {
-    let date = data.uviDatas[i].startTime.substring(5, 10)
-    console.log('===data.uviDatas[0].startTime): ', data.uviDatas[0].startTime)
-    console.log('date: ', new Date(data.uviDatas[0].startTime))
-    console.log(new Date())
-    if (new Date(data.uviDatas[0].startTime) > new Date()) {
-      console.log('===hi')
+  let uviIndex = 0
+  const startTime = data.uviDatas[0].startTime.substring(0, 10)
+  const nowTime = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).substring(0, 10)
+  // 若取得資料的起始時間比現在時間還要來得晚則減少一天，因為起始時間是由「紫外線指數」的資料來做判斷。
+  if (new Date(startTime) > new Date(nowTime)) {
+    uviIndex = -1
+  }
+  for (let i = 0; i < 6; i += 1) {
+    const englishDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const colors = ['#F44336', '#FFB11B', '#F596AA', '#227D51', '#F17C67', '#0D5661', '#592C63']
+    let date = new Date(data.uviDatas[i].startTime)
+    if (uviIndex === -1) {
+      date = reduceDays(date, -1)
     }
-    // break;
-    const englishDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    const colors = ['#FFB11B','#F596AA','#227D51','#F17C67','#0D5661','#592C63','#F44336']
-    const day = new Date(date)
-    const dayInfomation = `${locationName} - ${date.replace('-', '/')} ${englishDays[day.getDay()]}`
+    const dayInfomation = `${locationName} - ${date.getMonth() + 1} / ${date.getDate()} ${englishDays[date.getDay()]}`
+    const dateString = `${date.getMonth() + 1}-${date.getDate()}`
     const component = {
       "type": "bubble",
       "header": {
@@ -51,7 +54,7 @@ function containerFilterDatas(locationName, data) {
             "color": "#FFFFFF"
           }
         ],
-        "backgroundColor": colors[day.getDay()]
+        "backgroundColor": colors[date.getDay()]
       },
       // "hero": {
       //   "type": "box",
@@ -75,17 +78,18 @@ function containerFilterDatas(locationName, data) {
             "type": "box",
             "layout": "vertical",
             "spacing": "sm",
-            "contents": filterDatas(data, date, i)
+            "contents": filterDatas(data, dateString, uviIndex)
           }
         ]
       }
     }
     containers.push(component)
+    uviIndex = uviIndex + 1
   }
   return containers
 }
 
-function filterDatas(data, date, index) {
+function filterDatas(data, date, uviIndex) {
   let outside = []
   for (let i = 0; i < data.minTDatas.length; i += 1) {
     if (data.minTDatas[i].startTime.includes(date) === true) {
@@ -102,6 +106,10 @@ function filterDatas(data, date, index) {
         timeInterval = '早上至下午'
         meridiem = 'day'
         blockColor = '#BBDEFB'
+      } else if (startTime === '12:00:00') {
+        timeInterval = '中午至下午'
+        meridiem = 'day'
+        blockColor = '#BBDEFB'
       } else {
         timeInterval = '晚上至凌晨'
         meridiem = 'night'
@@ -113,7 +121,7 @@ function filterDatas(data, date, index) {
         contents: [
           {
             type: 'text',
-            text: `${timeInterval} - ${data.minTDatas[i].startTime}`,
+            text: `${timeInterval}`,
             weight: 'bold',
             margin: 'xs',
             size: 'xs',
@@ -214,30 +222,39 @@ function filterDatas(data, date, index) {
       outside.push(separatorComponent)
     }
   }
-  const uviComponent = {
-    type: 'box',
-    layout: 'baseline',
-    contents: [
-      {
-        type: 'text',
-        text: `紫外線指數：${data.uviDatas[index].parameter[0].value}`,
-        weight: 'bold',
-        margin: 'xs',
-        size: 'xs',
-        align: 'start',
-        flex: 0
-      },
-      {
-        type: 'text',
-        text: `曝曬級數：${data.uviDatas[index].parameter[1].value}`,
-        weight: 'bold',
-        margin: 'xs',
-        size: 'xs',
-        align: 'end',
-        flex: 1
-      }
-    ]
+  if (uviIndex !== -1) {
+    const uviComponent = {
+      type: 'box',
+      layout: 'baseline',
+      contents: [
+        {
+          type: 'text',
+          text: `紫外線指數：${data.uviDatas[uviIndex].parameter[0].value}`,
+          weight: 'bold',
+          margin: 'xs',
+          size: 'xs',
+          align: 'start',
+          flex: 0
+        },
+        {
+          type: 'text',
+          text: `曝曬級數：${data.uviDatas[uviIndex].parameter[1].value}`,
+          weight: 'bold',
+          margin: 'xs',
+          size: 'xs',
+          align: 'end',
+          flex: 1
+        }
+      ]
+    }
+    outside.push(uviComponent)
   }
-  outside.push(uviComponent)
   return outside
+}
+
+
+function reduceDays(date, days) {
+  let result = new Date(date)
+  result.setDate(result.getDate() - days)
+  return result
 }

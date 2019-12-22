@@ -30,13 +30,13 @@ function getCountyNoteData(locationId) {
       let title, content, dataTime
       for (let key in allNoteDatas) {
         if (key === locationId) {
-          title = allNoteDatas[key].Title
+          title = allNoteDatas[key].Title.replace('【', '').replace('】', '').replace('；', '\n')
           content = allNoteDatas[key].Content
           dataTime = allNoteDatas[key].DataTime
           break
         }
       }
-      content = content.join('\n')
+      content = content.join('\n\n')
       return resolve({ title, content, dataTime })
     })
   })
