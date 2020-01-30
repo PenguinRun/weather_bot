@@ -1,7 +1,7 @@
 const uvi = 'https://www.cwb.gov.tw/Data/UVI/UVI.png'
 
 const rainfall = function () {
-    return `https://www.cwb.gov.tw/Data/rainfall/${onTime()}_${getHoursAndMinutes()}.QZJ8.jpg`
+    return `https://www.cwb.gov.tw/Data/rainfall/${onTime()}_${getHoursAndMinutesForRainfall()}.QZJ8.jpg`
 }
 
 const temperature = function () {

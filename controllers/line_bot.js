@@ -26,7 +26,7 @@ async function handleEvent(event) {
     if (event.message.text === '溫度') {
         return client.replyMessage(event.replyToken, await images.temperature());
     }
-    if (event.message.text === '降雨機率') {
+    if (event.message.text === '雨量') {
         return client.replyMessage(event.replyToken, await images.rainfall());
     }
     if (event.message.text === '颱風') {

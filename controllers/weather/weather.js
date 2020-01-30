@@ -25,21 +25,34 @@ module.exports = async function getCountyWeather(locationName) {
 function containerFilterDatas(locationName, data) {
   let containers = []
   let uviIndex = 0
-  const startTime = data.uviDatas[0].startTime.substring(0, 10)
+  // const startTime = data.uviDatas[0].startTime.substring(0, 10)
+  let originWeekArray = []
+  for (let i = 0 ; i < data.minTDatas.length; i += 1) {
+    originWeekArray.push(data.minTDatas[i].startTime.substring(0, 10))
+  }
+  
+  const weekArray = Array.from(new Set(originWeekArray))
+
+  const startTime = data.minTDatas[0].startTime.substring(0, 10)
   const nowTime = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).substring(0, 10)
   // 若取得資料的起始時間比現在時間還要來得晚則減少一天，因為起始時間是由「紫外線指數」的資料來做判斷。
   if (new Date(startTime) > new Date(nowTime)) {
     uviIndex = -1
   }
-  for (let i = 0; i < 6; i += 1) {
+  for (let i = 0; i < weekArray.length; i += 1) {
+    // 英文對照
     const englishDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    // 日期顏色對照
     const colors = ['#F44336', '#FFB11B', '#F596AA', '#227D51', '#F17C67', '#0D5661', '#592C63']
-    let date = new Date(data.uviDatas[i].startTime)
-    if (uviIndex === -1) {
-      date = reduceDays(date, -1)
-    }
+    let date = new Date(weekArray[i])
     const dayInfomation = `${locationName} - ${date.getMonth() + 1} / ${date.getDate()} ${englishDays[date.getDay()]}`
-    const dateString = `${date.getMonth() + 1}-${date.getDate()}`
+    let dateString = ''
+    if (date.getDate() < 10) {
+      dateString = `${date.getMonth() + 1}-0${date.getDate()}`
+    } else {
+      dateString = `${date.getMonth() + 1}-${date.getDate()}`
+    }
+
     const component = {
       "type": "bubble",
       "header": {
