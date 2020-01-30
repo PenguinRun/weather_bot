@@ -35,10 +35,14 @@ function containerFilterDatas(locationName, data) {
 
   const startTime = data.minTDatas[0].startTime.substring(0, 10)
   const nowTime = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }).substring(0, 10)
+  console.log('===startTime: ', startTime)
+  console.log('===nowTime: ', nowTime)
+  console.log('===server time: ', new Date())
   // 若取得資料的起始時間比現在時間還要來得晚則減少一天，因為起始時間是由「紫外線指數」的資料來做判斷。
   if (new Date(startTime) > new Date(nowTime)) {
     uviIndex = -1
   }
+  console.log('==uviIndex: ', uviIndex)
   for (let i = 0; i < weekArray.length; i += 1) {
     // 英文對照
     const englishDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
